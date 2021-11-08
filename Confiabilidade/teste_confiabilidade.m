@@ -1,11 +1,11 @@
 clear;
 clc;
 %%
-%inicialização das constantes
-lambda=10^(-5);     %Taxa de ocorrência de falhas (upset/bit per day)
+%inicializaÃ§Ã£o das constantes
+lambda=10^(-5);     %Taxa de ocorrÃªncia de falhas (upset/bit per day)
 TDias=40000;        %Tempo em dias 
 
-%%Quantidade de bits para dados para cada código
+%%Quantidade de bits para dados para cada cÃ³digo
 WMatrix=16;
 WReed_Muller=16;
 WHamming=16;
@@ -17,7 +17,7 @@ WPHICC32=16;
 WPHICC36=16;
 WPHICC44=16;
 
-%Quantidade de bits de redundância para cada código
+%Quantidade de bits de redundÃ¢ncia para cada cÃ³digo
 CMatrix=16;
 CReed_Muller=20;
 CHamming=24;
@@ -33,18 +33,18 @@ tempo=linspace(1, TDias,65); %amostragem do tempo
 m=16;                %quantidade de palavras
 
 %%
-%Leitura dos dados de probabilidade de detecção ou de correção de falhas
+%Leitura dos dados de probabilidade de detecÃ§Ã£o ou de correÃ§Ã£o de falhas
 %  load dadosDet.txt
 %  dados = dadosDet;
-load dadosPHICC.txt
-dados = dadosPHICC;
+load dadosCorrecao.txt
+dados = dadosCorrecao;
 
-%O valor da primeira coluna indica se é detecção ou correção
+%O valor da primeira coluna indica se Ã© detecÃ§Ã£o ou correÃ§Ã£o
 
-% 1: Detecção
-% 2: Correção
+% 1: DetecÃ§Ã£o
+% 2: CorreÃ§Ã£o
 
-% O valor da segunda coluna da matriz indica qual o código
+% O valor da segunda coluna da matriz indica qual o cÃ³digo
 % 1: Dados do Matrix
 % 2: Dados do Reed Muller
 % 3: Dados de Hamming
@@ -56,37 +56,37 @@ dados = dadosPHICC;
 % 9: PHICC(36,16)
 % 10: PHICC(44,16)
 
-for l= 1:length(dados(:,1)) % Laço para a realização dos testes
+for l= 1:length(dados(:,1)) % LaÃ§o para a realizaÃ§Ã£o dos testes
     
     if dados(l,2)==1 
         PFDC_Matrix=zeros(8,1); 
         for col=3:length(dados(l,:))%leitura dos dados correspondentes ao Matrix
             PFDC_Matrix(col-2,1)=dados(l,col);
         end
-        %coverage determina a cobertura de detecção ou correção em relação ao tempo
+        %coverage determina a cobertura de detecÃ§Ã£o ou correÃ§Ã£o em relaÃ§Ã£o ao tempo
         fdc_Matrix = coverage(PFDC_Matrix,lambda,tempo, WMatrix, CMatrix);
         
-        %Reliability e MTTF são calculados caso os dados sejam de correção      
+        %Reliability e MTTF sÃ£o calculados caso os dados sejam de correÃ§Ã£o      
         if dados(l,1)==2
             %reliability determina a confiabilidade no decorrer do tempo
             R_Matrix = reliability(PFDC_Matrix, lambda, tempo, WMatrix, CMatrix, m);
-            %Cálculo do MTTF
+            %CÃ¡lculo do MTTF
             MTTF_matrix=mttf(PFDC_Matrix, lambda, TDias, WMatrix, CMatrix, m);
         end
         
-    % As mesmas operações são feitas para os outros ECCs
+    % As mesmas operaÃ§Ãµes sÃ£o feitas para os outros ECCs
     elseif dados(l,2)==2
         PFDC_Reed_Muller=zeros(8,1);
         for col=3:length(dados(l,:))%leitura dos dados correspondentes ao RM
             PFDC_Reed_Muller(col-2,1)=dados(l,col);
         end
-        %coverage determina a cobertura de detecção ou correção em relação ao tempo
+        %coverage determina a cobertura de detecÃ§Ã£o ou correÃ§Ã£o em relaÃ§Ã£o ao tempo
         fdc_Reed_muller = coverage(PFDC_Reed_Muller,lambda,tempo, WReed_Muller, CReed_Muller);
        
         if dados(l,1)==2
             %reliability determina a confiabilidade no decorrer do tempo
             R_Reed_Muller = reliability(PFDC_Reed_Muller, lambda, tempo, WReed_Muller, CReed_Muller, m);
-            %Cálculo do MTTF
+            %CÃ¡lculo do MTTF
             MTTF_Reed_Muller=mttf(PFDC_Reed_Muller, lambda, TDias, WReed_Muller, CReed_Muller, m);
         end
     
@@ -95,13 +95,13 @@ for l= 1:length(dados(:,1)) % Laço para a realização dos testes
         for col=3:length(dados(l,:))%leitura dos dados correspondentes ao Hamming
             PFDC_Hamming(col-2,1)=dados(l,col);
         end
-        %coverage determina a cobertura de detecção ou correção em relação ao tempo
+        %coverage determina a cobertura de detecÃ§Ã£o ou correÃ§Ã£o em relaÃ§Ã£o ao tempo
         fdc_Hamming = coverage(PFDC_Hamming,lambda,tempo, WHamming, CHamming);
         
         if dados(l,1)==2
             %reliability determina a confiabilidade no decorrer do tempo
             R_Hamming = reliability(PFDC_Hamming, lambda, tempo, WHamming, CHamming, m);
-            %Cálculo do MTTF
+            %CÃ¡lculo do MTTF
             MTTF_Hamming=mttf(PFDC_Hamming, lambda, TDias, WHamming, CHamming, m);
         end
     
@@ -110,13 +110,13 @@ for l= 1:length(dados(:,1)) % Laço para a realização dos testes
         for col=3:length(dados(l,:)) %leitura dos dados correspondentes ao CLC
             PFDC_CLC(col-2,1)=dados(l,col);
         end
-        %coverage determina a cobertura de detecção ou correção em relação ao tempo
+        %coverage determina a cobertura de detecÃ§Ã£o ou correÃ§Ã£o em relaÃ§Ã£o ao tempo
         fdc_CLC = coverage(PFDC_CLC,lambda,tempo, WCLC, CCLC);
                
         if dados(l,1)==2
             %reliability determina a confiabilidade no decorrer do tempo
             R_CLC = reliability(PFDC_CLC, lambda, tempo, WCLC, CCLC, m);
-            %Cálculo do MTTF
+            %CÃ¡lculo do MTTF
             MTTF_CLC=mttf(PFDC_CLC, lambda, TDias, WCLC, CCLC, m);
         end
         
@@ -125,13 +125,13 @@ for l= 1:length(dados(:,1)) % Laço para a realização dos testes
         for col=3:length(dados(l,:))%leitura dos dados correspondentes ao Extended CLC
             PFDC_ExCLC(col-2,1)=dados(l,col);
         end
-        %coverage determina a cobertura de detecção ou correção em relação ao tempo
+        %coverage determina a cobertura de detecÃ§Ã£o ou correÃ§Ã£o em relaÃ§Ã£o ao tempo
         fdc_ExCLC = coverage(PFDC_ExCLC,lambda,tempo, WExCLC, CExCLC);
         
         if dados(l,1)==2
             %reliability determina a confiabilidade no decorrer do tempo
             R_ExCLC = reliability(PFDC_ExCLC, lambda, tempo, WExCLC, CExCLC, m);
-            %Cálculo do MTTF
+            %CÃ¡lculo do MTTF
             MTTF_ExCLC=mttf(PFDC_ExCLC, lambda, TDias, WExCLC, CExCLC, m);
         end
         
@@ -140,13 +140,13 @@ for l= 1:length(dados(:,1)) % Laço para a realização dos testes
         for col=3:length(dados(l,:))%leitura dos dados correspondentes ao Extended CLC
             PFDC_PHICC(col-2,1)=dados(l,col);
         end
-        %coverage determina a cobertura de detecção ou correção em relação ao tempo
+        %coverage determina a cobertura de detecÃ§Ã£o ou correÃ§Ã£o em relaÃ§Ã£o ao tempo
         fdc_PHICC = coverage(PFDC_PHICC,lambda,tempo, WPHICC, CPHICC);
         
         if dados(l,1)==2
             %reliability determina a confiabilidade no decorrer do tempo
             R_PHICC = reliability(PFDC_PHICC, lambda, tempo, WPHICC, CPHICC, m);
-            %Cálculo do MTTF
+            %CÃ¡lculo do MTTF
             MTTF_PHICC=mttf(PFDC_PHICC, lambda, TDias, WPHICC, CPHICC, m);
         end
         
@@ -155,13 +155,13 @@ for l= 1:length(dados(:,1)) % Laço para a realização dos testes
         for col=3:length(dados(l,:))%leitura dos dados correspondentes ao Extended CLC
             PFDC_MRSC(col-2,1)=dados(l,col);
         end
-        %coverage determina a cobertura de detecção ou correção em relação ao tempo
+        %coverage determina a cobertura de detecÃ§Ã£o ou correÃ§Ã£o em relaÃ§Ã£o ao tempo
         fdc_MRSC = coverage(PFDC_MRSC,lambda,tempo, WMRSC, CMRSC);
         
         if dados(l,1)==2
             %reliability determina a confiabilidade no decorrer do tempo
             R_MRSC = reliability(PFDC_MRSC, lambda, tempo, WMRSC, CMRSC, m);
-            %Cálculo do MTTF
+            %CÃ¡lculo do MTTF
             MTTF_MRSC=mttf(PFDC_MRSC, lambda, TDias, WMRSC, CMRSC, m);
         end
 
@@ -170,13 +170,13 @@ for l= 1:length(dados(:,1)) % Laço para a realização dos testes
         for col=3:length(dados(l,:))%leitura dos dados correspondentes ao Extended CLC
             PFDC_PHICC32(col-2,1)=dados(l,col);
         end
-        %coverage determina a cobertura de detecção ou correção em relação ao tempo
+        %coverage determina a cobertura de detecÃ§Ã£o ou correÃ§Ã£o em relaÃ§Ã£o ao tempo
         fdc_PHICC32 = coverage(PFDC_PHICC32,lambda,tempo, WPHICC32, CPHICC32);
         
         if dados(l,1)==2
             %reliability determina a confiabilidade no decorrer do tempo
             R_PHICC32 = reliability(PFDC_PHICC32, lambda, tempo, WPHICC32, CPHICC32, m);
-            %Cálculo do MTTF
+            %CÃ¡lculo do MTTF
             MTTF_PHICC32=mttf(PFDC_PHICC32, lambda, TDias, WPHICC32, CPHICC32, m);
         end
 
@@ -185,13 +185,13 @@ for l= 1:length(dados(:,1)) % Laço para a realização dos testes
         for col=3:length(dados(l,:))%leitura dos dados correspondentes ao Extended CLC
             PFDC_PHICC36(col-2,1)=dados(l,col);
         end
-        %coverage determina a cobertura de detecção ou correção em relação ao tempo
+        %coverage determina a cobertura de detecÃ§Ã£o ou correÃ§Ã£o em relaÃ§Ã£o ao tempo
         fdc_PHICC36 = coverage(PFDC_PHICC36,lambda,tempo, WPHICC36, CPHICC36);
         
         if dados(l,1)==2
             %reliability determina a confiabilidade no decorrer do tempo
             R_PHICC36 = reliability(PFDC_PHICC36, lambda, tempo, WPHICC36, CPHICC36, m);
-            %Cálculo do MTTF
+            %CÃ¡lculo do MTTF
             MTTF_PHICC36=mttf(PFDC_PHICC36, lambda, TDias, WPHICC36, CPHICC36, m);
         end
       
@@ -200,20 +200,20 @@ for l= 1:length(dados(:,1)) % Laço para a realização dos testes
         for col=3:length(dados(l,:))%leitura dos dados correspondentes ao Extended CLC
             PFDC_PHICC44(col-2,1)=dados(l,col);
         end
-        %coverage determina a cobertura de detecção ou correção em relação ao tempo
+        %coverage determina a cobertura de detecÃ§Ã£o ou correÃ§Ã£o em relaÃ§Ã£o ao tempo
         fdc_PHICC44 = coverage(PFDC_PHICC44,lambda,tempo, WPHICC44, CPHICC44);
         
         if dados(l,1)==2
             %reliability determina a confiabilidade no decorrer do tempo
             R_PHICC44 = reliability(PFDC_PHICC44, lambda, tempo, WPHICC44, CPHICC44, m);
-            %Cálculo do MTTF
+            %CÃ¡lculo do MTTF
             MTTF_PHICC44=mttf(PFDC_PHICC44, lambda, TDias, WPHICC44, CPHICC44, m);
         end
     end 
 end
 
 %%
-%Gráficos
+%GrÃ¡ficos
 %Coverage
 figure;
 hold on
